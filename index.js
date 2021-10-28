@@ -17,14 +17,16 @@ app.get('/api/languages', async (req,res)=>{
     res.send(response.data)
 })
 app.get('/api/languages/:id', async (req,res)=>{
-    const response = await axios.get(`http://localhost:3000/coding_languages/${id}`)
+    console.log(req.params.id)
+    const response = await axios.get(`http://localhost:3000/coding_languages/${req.params.id}`)
                       .catch((err) => {
                           console.log(err)
+                          console.log(response)
                           res.send('ERROR')
                           res.end()
                       })
-    console.log(response)
-    res.send(response)
+    console.log(response.data)
+    res.send(response.data)
 })
 
 
