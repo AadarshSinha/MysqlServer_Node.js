@@ -1,12 +1,63 @@
 const axios = require('axios');
 const express = require('express');
+const db = require('./sql')
 const app = express()
 app.use(express.json())
-
-
 app.get('/',(req,res)=>{
     res.send('Hello There')
 })
+
+//**************************************SQL-SERVER****************************************//
+app.get('/data',(req,res)=>{
+        let sql ='SELECT * FROM sql_data';
+        db.query(sql,(err,result)=>{
+        if(err){
+        console.log("ERROR",err)
+        res.send('ERROR')
+        }
+        console.log('DataBase Created' , result)
+        res.send(result)
+      })
+})
+app.post('/data',(req,res)=>{
+        let sql =`INSERT INTO sql_data (id,language,year) VALUES (${req.body.id}, '${req.body.language}', ${req.body.year});`
+        db.query(sql,(err,result)=>{
+        if(err){
+        console.log("ERROR",err)
+        res.send('ERROR')
+        }
+        console.log('DataBase Created' , result)
+        res.send(result)
+      })
+})
+app.put('/data',(req,res)=>{
+        let sql =`UPDATE sql_data SET language = '${req.body.language}', year = ${req.body.year} WHERE (id = ${req.body.id});`
+        db.query(sql,(err,result)=>{
+        if(err){
+        console.log("ERROR",err)
+        res.send('ERROR')
+        }
+        console.log('DataBase Created' , result)
+        res.send(result)
+      })
+})
+app.delete('/data/:id',(req,res)=>{
+        let sql =`DELETE FROM sql_data WHERE id=${req.params.id};`
+        db.query(sql,(err,result)=>{
+        if(err){
+        console.log("ERROR",err)
+        res.send('ERROR')
+        }
+        console.log('DataBase Created' , result)
+        res.send(result)
+      })
+})
+
+
+
+
+
+//**************************************JSON-SERVER****************************************//
 app.get('/api/languages', async (req,res)=>{
     const response = await axios.get("http://localhost:3000/coding_languages")
                       .catch((err) => {
@@ -78,4 +129,12 @@ app.delete('/api/languages',async (req,res)=>{
 })
 
 
-app.listen(2000,() => {console.log("Listining on port 2000...")});
+app.listen(2000,() => {
+    console.log("Listining on port 2000...")
+    db.connect((err)=>{
+        if(err)
+        console.log("ERROR",err)
+        else
+        console.log('MySql server connected ...')
+    })
+});
